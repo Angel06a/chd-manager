@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHD Manager - Interfaz Gráfica para chdman (Windows)</title>
+    <!-- Web Favicon -->
+    <link rel="icon" type="image/webp" href="img/icon.webp">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        winbg: '#f0f0f0',
+                        winborder: '#adadad',
+                        winbtn: '#e1e1e1',
+                        winbtnhover: '#e5f1fb',
+                        winbtnborderhover: '#0078d7',
+                        winheader: '#0078d7',
+                        wintext: '#000000',
+                        winsubtext: '#555555',
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
+                        mono: ['Consolas', 'Courier New', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#f5f6f8] text-slate-900 antialiased selection:bg-[#0078d7] selection:text-white">
+
+    <!-- Toast Notification System -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ========================================== -->
+    <!-- HEADER / NAVIGATION -->
+    <!-- ========================================== -->
+    <header class="sticky top-0 z-40 bg-white border-b border-slate-300 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <img src="img/icon.webp" alt="CHD Manager" class="w-6 h-6 object-contain">
+                    <div class="flex flex-col">
+                        <span class="font-bold text-lg tracking-tight text-slate-900 leading-tight">CHD Manager</span>
+                        <span class="text-[11px] text-slate-500">Interfaz Gráfica para Windows</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-700">
+                    <a href="#demo" class="hover:text-[#0078d7] transition-colors" data-i18n="navInterface">Interfaz</a>
+                    <a href="#caracteristicas" class="hover:text-[#0078d7] transition-colors" data-i18n="navFeatures">Características</a>
+                    <a href="#calculadora" class="hover:text-[#0078d7] transition-colors" data-i18n="navCalculator">Calculadora</a>
+                    <a href="#faq" class="hover:text-[#0078d7] transition-colors" data-i18n="navFaq">FAQ</a>
+                </nav>
+
+                <!-- Action Buttons & Social Links -->
+                <div class="hidden sm:flex items-center gap-3">
+                    <div class="flex items-center gap-2 border-r border-slate-200 pr-3">
+                        <a href="#" target="_blank" rel="noopener" class="text-slate-600 hover:text-slate-900 text-lg px-1.5 link-github" title="GitHub">
+                            <i class="fa-brands fa-github"></i>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener" class="text-slate-600 hover:text-blue-600 text-lg px-1.5 link-gravatar" title="Gravatar">
+                            <i class="fa-solid fa-user-circle"></i>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener" class="text-slate-600 hover:text-red-500 text-lg px-1.5 link-kofi" title="Ko-fi">
+                            <i class="fa-solid fa-mug-hot"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Global Language Selector -->
+                    <select id="global-lang-select" onchange="setLanguage(this.value)" class="win-select font-sans text-xs py-1">
+                        <option value="es" selected>Español</option>
+                        <option value="en">English</option>
+                    </select>
+
+                    <a href="#" target="_blank" rel="noopener" class="win-button win-button-primary px-4 py-2 flex items-center gap-2 text-sm link-download">
+                        <i class="fa-brands fa-windows text-blue-600"></i>
+                        <span data-i18n="downloadBtn">Descargar v1.0</span>
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" type="button" class="text-slate-700 p-2 rounded-md" aria-label="Abrir Menú">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-2">
+            <a href="#demo" class="mobile-nav-link block px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-100" data-i18n="navInterface">Interfaz</a>
+            <a href="#caracteristicas" class="mobile-nav-link block px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-100" data-i18n="navFeatures">Características</a>
+            <a href="#calculadora" class="mobile-nav-link block px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-100" data-i18n="navCalculator">Calculadora</a>
+            <a href="#faq" class="mobile-nav-link block px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-100" data-i18n="navFaq">FAQ</a>
+            
+            <div class="flex items-center justify-between py-2 border-t border-slate-200">
+                <div class="flex items-center gap-3 text-xl">
+                    <a href="#" target="_blank" rel="noopener" class="text-slate-600 hover:text-slate-900 link-github"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" target="_blank" rel="noopener" class="text-slate-600 hover:text-blue-600 link-gravatar"><i class="fa-solid fa-user-circle"></i></a>
+                    <a href="#" target="_blank" rel="noopener" class="text-slate-600 hover:text-red-500 link-kofi"><i class="fa-solid fa-mug-hot"></i></a>
+                </div>
+                <select onchange="setLanguage(this.value)" class="win-select font-sans text-xs py-1">
+                    <option value="es" selected>Español</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+
+            <a href="#" target="_blank" rel="noopener" class="mobile-nav-link block w-full text-center win-button win-button-primary py-2 mt-2 link-download">
+                <i class="fa-brands fa-windows mr-1"></i> <span data-i18n="downloadBtn">Descargar v1.0</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- HERO SECTION -->
+    <!-- ========================================== -->
+    <section class="pt-8 pb-16 md:pt-12 md:pb-20 bg-gradient-to-b from-slate-100 to-[#f5f6f8]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-8">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-xs font-semibold text-blue-700 mb-4 shadow-sm">
+                    <i class="fa-brands fa-windows text-blue-600"></i>
+                    <span data-i18n="heroBadge">Diseñado de forma nativa para Windows (chdman v0.287+)</span>
+                </div>
+
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900 mb-4" data-i18n="heroTitle">
+                    La interfaz visual para comprimir tus juegos a formato CHD
+                </h1>
+
+                <p class="text-base sm:text-lg text-slate-600 mb-6 max-w-2xl mx-auto" data-i18n="heroSubtitle">
+                    Optimiza espacio en tus copias de PS1, PS2, Dreamcast y Saturn sin complicaciones. Interfaz nativa, liviana, rápida y fácil de usar.
+                </p>
+
+                <div class="flex flex-wrap items-center justify-center gap-3">
+                    <a href="#" target="_blank" rel="noopener" class="win-button win-button-primary text-base px-6 py-2.5 flex items-center gap-2 shadow-sm link-download">
+                        <i class="fa-solid fa-download text-blue-600"></i>
+                        <span data-i18n="downloadFreeBtn">Descargar Gratis para Windows</span>
+                    </a>
+                    <a href="#demo" class="win-button text-base px-5 py-2.5 flex items-center gap-2">
+                        <i class="fa-solid fa-desktop text-slate-600"></i>
+                        <span data-i18n="tryDemoBtn">Probar Demostración</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- REPLICA INTERACTIVA DE LA INTERFAZ -->
+            <!-- ========================================== -->
+            <div id="demo" class="max-w-4xl mx-auto mt-6">
+                
+                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider text-center mb-2">
+                    <i class="fa-solid fa-mouse-pointer text-blue-600 mr-1"></i> <span data-i18n="interactiveNotice">Interfaz Interactiva - Haz clic en "Comprimir a CHD" para simular</span>
+                </div>
+
+                <!-- Window Outer Frame -->
+                <div class="win-window-frame rounded-t-sm overflow-hidden border border-slate-400">
+                    
+                    <!-- Windows Titlebar -->
+                    <div class="win-titlebar px-3 py-1.5 flex items-center justify-between bg-white border-b border-slate-300">
+                        <div class="flex items-center gap-2">
+                            <img src="img/icon.webp" alt="Icon" class="w-4 h-4 object-contain">
+                            <span class="text-xs font-normal text-slate-800">CHD Manager</span>
+                        </div>
+                        <div class="flex items-center">
+                            <button class="px-3 py-0.5 hover:bg-slate-200 text-xs text-slate-600" title="Minimizar">—</button>
+                            <button class="px-3 py-0.5 hover:bg-slate-200 text-xs text-slate-600" title="Maximizar">☐</button>
+                            <button class="px-3 py-0.5 hover:bg-red-600 hover:text-white text-xs text-slate-600" title="Cerrar">✕</button>
+                        </div>
+                    </div>
+
+                    <!-- Application Main Layout -->
+                    <div class="p-3 space-y-2.5 text-xs select-none bg-[#f0f0f0]">
+                        
+                        <!-- Row 1: Carpeta de juegos -->
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                            <label class="w-32 text-slate-900 shrink-0" data-i18n="lblGameFolder">Carpeta de juegos:</label>
+                            <input type="text" id="ui-game-folder" value="C:\Programas\CHD Manager" class="win-input flex-1 font-sans">
+                            <div class="flex gap-1.5 shrink-0">
+                                <button class="win-button min-w-[90px]" onclick="simFolderSelect()" data-i18n="btnFolder">Carpeta...</button>
+                                <button class="win-button min-w-[90px]" onclick="simFileSelect()" data-i18n="btnFiles">Archivos...</button>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Carpeta de salida -->
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                            <label class="w-32 text-slate-900 shrink-0" data-i18n="lblOutFolder">Carpeta de salida:</label>
+                            <input type="text" id="ui-out-folder" value="C:\Users\ug252\Downloads" class="win-input flex-1 font-sans">
+                            <div class="flex gap-1 shrink-0">
+                                <button class="win-button min-w-[90px]" onclick="simOutFolderSelect()" data-i18n="btnBrowse">Examinar...</button>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Checkboxes arriba y Botón Abrir logs -->
+                        <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5 pl-0 sm:pl-32">
+                            <div class="flex items-center gap-6 flex-wrap">
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" id="ui-subfolders" checked class="win-checkbox">
+                                    <span class="text-slate-900" data-i18n="chkSubfolders">Incluir subcarpetas</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" id="ui-log-file" class="win-checkbox">
+                                    <span class="text-slate-900" data-i18n="chkLogFile">Guardar registro en archivo (.txt)</span>
+                                </label>
+                            </div>
+                            <button class="win-button min-w-[150px]" onclick="simOpenLogs()" data-i18n="btnOpenLogs">Abrir carpeta de registros</button>
+                        </div>
+
+                        <!-- Row 4: Sistema dropdown y descripción -->
+                        <div class="pt-1">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <label class="w-32 text-slate-900 shrink-0" data-i18n="lblSystem">Sistema:</label>
+                                <select id="ui-system-select" onchange="updateSystemDescription()" class="win-select flex-1 font-sans">
+                                    <option value="generic_cd" selected>CD Genérico - PSX, Saturn, Sega CD, PC Engine CD</option>
+                                    <option value="ps2">DVD Genérico - PlayStation 2 (PS2)</option>
+                                    <option value="dc">SEGA Dreamcast (GDI/BIN)</option>
+                                    <option value="psp">PlayStation Portable (PSP ISO)</option>
+                                </select>
+                            </div>
+                            <p id="ui-system-desc" class="text-[11px] text-slate-500 pl-0 sm:pl-32 mt-1 leading-snug">
+                                createdcd con los códecs por defecto. Válido para PlayStation 1, Sega Saturn, Sega CD, PC Engine CD y similares basados en .cue. Multidisco: usa Playlists .m3u al terminar.
+                            </p>
+                        </div>
+
+                        <!-- Row 5: Compresión dropdown -->
+                        <div class="pt-1">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <label class="w-32 text-slate-900 shrink-0" data-i18n="lblCompression">Compresión:</label>
+                                <select id="ui-compression-select" class="win-select flex-1 font-sans">
+                                    <option selected>Compatible: códecs por defecto de chdman (recomendado)</option>
+                                    <option>Máxima compresión (LZMA + ZSTD)</option>
+                                    <option>Sin compresión (Solo contenedor CHD)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Options Checkboxes & CPU Threads Row -->
+                        <div class="pl-0 sm:pl-32 pt-1 space-y-1.5 text-[12px]">
+                            <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+                                <div class="flex items-center gap-6 flex-wrap">
+                                    <label class="flex items-center gap-1.5 cursor-pointer">
+                                        <input type="checkbox" id="opt-overwrite" class="win-checkbox">
+                                        <span class="text-slate-900" data-i18n="chkOverwrite">Sobrescribir existentes</span>
+                                    </label>
+                                    <label class="flex items-center gap-1.5 cursor-pointer">
+                                        <input type="checkbox" id="opt-verify" class="win-checkbox">
+                                        <span class="text-slate-900" data-i18n="chkVerify">Verificar cada CHD tras crearlo</span>
+                                    </label>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-slate-900" data-i18n="lblThreads">Hilos de CPU (0 = auto):</span>
+                                    <input type="number" id="opt-threads" value="0" min="0" max="32" class="win-input w-16 text-right">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" id="opt-trash" class="win-checkbox">
+                                    <span class="text-slate-900" data-i18n="chkTrash">Enviar los originales a la Papelera tras crear el CHD (solo si se verifica bien)</span>
+                                </label>
+                            </div>
+
+                            <div class="flex items-center gap-6 flex-wrap pt-0.5">
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" id="opt-sound" checked class="win-checkbox">
+                                    <span class="text-slate-900" data-i18n="chkSound">Sonido al terminar</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" id="opt-shutdown" class="win-checkbox">
+                                    <span class="text-slate-900" data-i18n="chkShutdown">Apagar al terminar</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" id="opt-extract-cd" checked class="win-checkbox">
+                                    <span class="text-slate-900" data-i18n="chkExtractCd">Extraer CD: una pista por archivo</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons Row -->
+                        <div class="pt-2 flex flex-wrap items-center justify-between gap-1.5">
+                            <button id="btn-compress" onclick="startSimulatedCompression()" class="win-button win-button-primary flex-1 min-w-[120px] py-1" data-i18n="btnCompress">Comprimir a CHD</button>
+                            <button class="win-button flex-1 min-w-[100px] py-1" onclick="simRecompress()" data-i18n="btnRecompress">Recomprimir CHD</button>
+                            <button class="win-button flex-1 min-w-[85px] py-1" onclick="simExtract()" data-i18n="btnExtract">Extraer CHD</button>
+                            <button class="win-button flex-1 min-w-[85px] py-1" onclick="simVerify()" data-i18n="btnVerify">Verificar CHD</button>
+                            <button class="win-button flex-1 min-w-[95px] py-1" onclick="simM3u()" data-i18n="btnM3u">Playlists .m3u</button>
+                            <button class="win-button flex-1 min-w-[75px] py-1" onclick="simInfo()" data-i18n="btnInfo">Info CHD</button>
+                            <button id="btn-cancel" disabled class="win-button min-w-[70px] py-1" onclick="cancelSimulatedCompression()" data-i18n="btnCancel">Cancelar</button>
+                        </div>
+
+                        <!-- Progress Bar & Status Section -->
+                        <div class="pt-1 space-y-1">
+                            <div id="ui-status-label" class="text-slate-900 text-[12px] font-sans" data-i18n="statusReady">Listo.</div>
+                            <div class="win-progressbar-container">
+                                <div id="ui-progress-1" class="win-progressbar-fill"></div>
+                            </div>
+                            <div class="win-progressbar-container">
+                                <div id="ui-progress-2" class="win-progressbar-fill"></div>
+                            </div>
+                        </div>
+
+                        <!-- Console Log Display Box -->
+                        <div class="pt-1">
+                            <textarea id="ui-console" readonly class="win-console w-full h-56 p-2 rounded-none leading-relaxed" spellcheck="false">Cómo empezar:
+  1. Elige una carpeta de juegos (o archivos sueltos con el botón Archivos...).
+  2. Elige el sistema y el modo de compresión.
+  3. Pulsa Comprimir a CHD.
+
+Los demás botones trabajan con CHD que ya tienes: recomprimir, extraer, verificar, crear playlists .m3u y ver información.</textarea>
+                        </div>
+
+                        <!-- Footer Status Bar -->
+                        <div class="pt-2 flex flex-wrap items-center justify-between gap-2 text-[12px] text-slate-800">
+                            <div class="font-sans text-slate-800" data-i18n="footerChdman">chdman: versión 0.287</div>
+                            
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <a href="#" target="_blank" rel="noopener" class="text-blue-600 hover:underline flex items-center gap-1 font-medium link-kofi">
+                                    <span class="text-blue-500">♥</span> <span data-i18n="kofiText">Apoyar el proyecto</span>
+                                </a>
+
+                                <select id="ui-theme-select" class="win-select font-sans">
+                                    <option value="light" selected>Tema claro</option>
+                                    <option value="dark">Tema oscuro</option>
+                                </select>
+
+                                <button class="win-button text-[12px] px-3 py-0.5" onclick="simSelectChdman()" data-i18n="chdmanBrowse">Elegir chdman...</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- CARACTERÍSTICAS DESTACADAS -->
+    <!-- ========================================== -->
+    <section id="caracteristicas" class="py-16 bg-white border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <h2 class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2" data-i18n="featuresHeader">Poderoso y Eficiente</h2>
+                <p class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight" data-i18n="featuresTitle">Diseñado para simplificar tu colección retro</p>
+                <p class="text-slate-600 mt-2 text-sm" data-i18n="featuresSubtitle">Olvídate de scripts `.bat` complejos o ingresar comandos manuales en la consola.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-[#f9f9f9] border border-slate-300 rounded-sm p-5 hover:border-blue-500 transition-colors">
+                    <div class="w-10 h-10 rounded bg-blue-100 text-blue-700 flex items-center justify-center text-lg mb-4"><i class="fa-solid fa-folder-tree"></i></div>
+                    <h3 class="text-base font-bold text-slate-900 mb-2">Procesamiento Completo de Carpetas</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">Detecta automáticamente imágenes `.iso`, `.cue/.bin` y `.gdi` en subcarpetas. Convierte bibliotecas enteras en un solo clic.</p>
+                </div>
+                <div class="bg-[#f9f9f9] border border-slate-300 rounded-sm p-5 hover:border-blue-500 transition-colors">
+                    <div class="w-10 h-10 rounded bg-blue-100 text-blue-700 flex items-center justify-center text-lg mb-4"><i class="fa-solid fa-list-check"></i></div>
+                    <h3 class="text-base font-bold text-slate-900 mb-2">Generador de Listas .m3u</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">Crea automáticamente archivos de lista de reproducción `.m3u` para juegos multidisco (como Final Fantasy o Metal Gear Solid).</p>
+                </div>
+                <div class="bg-[#f9f9f9] border border-slate-300 rounded-sm p-5 hover:border-blue-500 transition-colors">
+                    <div class="w-10 h-10 rounded bg-blue-100 text-blue-700 flex items-center justify-center text-lg mb-4"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3 class="text-base font-bold text-slate-900 mb-2">Verificación de Integridad</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">Verifica el archivo CHD generado inmediatamente después de crearlo para garantizar que no haya corrupción de datos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- CALCULADORA DE ESPACIO -->
+    <!-- ========================================== -->
+    <section id="calculadora" class="py-16 bg-[#f5f6f8]">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white border border-slate-300 rounded-sm p-6 shadow-sm">
+                <div class="flex items-center gap-2 mb-4 border-b border-slate-200 pb-3">
+                    <i class="fa-solid fa-calculator text-blue-600 text-lg"></i>
+                    <h2 class="text-lg font-bold text-slate-900" data-i18n="calcTitle">Calculadora de Ahorro de Disco</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    <div class="space-y-4 text-xs">
+                        <div>
+                            <label class="block font-semibold text-slate-800 mb-1" data-i18n="calcSystemLabel">Selecciona el Sistema:</label>
+                            <select id="calc-system" onchange="calculateSavings()" class="win-select w-full py-1.5">
+                                <option value="ps1" data-ratio="0.42">PlayStation 1 (Promedio ~38% de ahorro)</option>
+                                <option value="ps2" data-ratio="0.52" selected>PlayStation 2 (Promedio ~48% de ahorro)</option>
+                                <option value="dc" data-ratio="0.45">SEGA Dreamcast (Promedio ~55% de ahorro)</option>
+                                <option value="segacd" data-ratio="0.38">SEGA CD / Saturn (Promedio ~62% de ahorro)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-800 mb-1" data-i18n="calcSizeLabel">Tamaño actual de tu carpeta de juegos (GB):</label>
+                            <input type="number" id="calc-gb" value="250" min="1" max="10000" oninput="calculateSavings()" class="win-input w-full py-1.5 font-mono">
+                        </div>
+                        <p class="text-slate-500 leading-normal" data-i18n="calcNote">
+                            * Los porcentajes son aproximados. La tasa final de compresión varía según los sectores vacíos y archivos de audio contenidos en las ISOs.
+                        </p>
+                    </div>
+                    <div class="bg-[#f0f0f0] border border-slate-300 p-5 rounded-sm space-y-3">
+                        <div class="text-xs text-slate-600" data-i18n="calcResultTitle">Estimación de resultado:</div>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-700" data-i18n="calcOrig">Tamaño actual (ISO/BIN):</span>
+                            <span id="calc-orig-res" class="font-bold font-mono text-slate-900 text-sm">250 GB</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-700" data-i18n="calcCompressed">Tamaño tras compresión (CHD):</span>
+                            <span id="calc-chd-res" class="font-bold font-mono text-blue-700 text-sm">130 GB</span>
+                        </div>
+                        <div class="border-t border-slate-300 pt-3 flex justify-between items-center">
+                            <span class="text-xs font-bold text-slate-900" data-i18n="calcSaved">Espacio recuperado:</span>
+                            <span id="calc-saved-res" class="font-bold font-mono text-green-700 text-base">120 GB (-48%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- DESCARGA -->
+    <!-- ========================================== -->
+    <section id="descargar" class="py-16 bg-white border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="max-w-xl mx-auto">
+                <img src="img/icon.webp" alt="Icon" class="w-12 h-12 object-contain mx-auto mb-3">
+                <h2 class="text-2xl font-bold text-slate-900 mb-2" data-i18n="downloadTitle">Obtén CHD Manager para Windows</h2>
+                <p class="text-slate-600 text-sm mb-6" data-i18n="downloadSubtitle">Descarga el paquete listo para ejecutar. No requiere instalación complicada.</p>
+
+                <div class="bg-[#f9f9f9] border border-slate-300 p-6 rounded-sm text-left mb-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-3 border-b border-slate-200 pb-2">
+                        <span class="font-bold text-sm text-slate-900" data-i18n="downloadBoxTitle">CHD_Manager_v1.0.zip</span>
+                    </div>
+                    <ul class="text-xs text-slate-600 space-y-1.5 mb-5">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-600"></i> <span data-i18n="downloadFeature1">Incluye versión compilada de `chdman.exe` (v0.287)</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-600"></i> <span data-i18n="downloadFeature2">Compatible con Windows 10 y Windows 11 (64-bit)</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-600"></i> <span data-i18n="downloadFeature3">Software portable: descomprimir y usar</span></li>
+                    </ul>
+                    <a href="#" target="_blank" rel="noopener" class="win-button win-button-primary w-full py-2.5 text-center block text-sm link-download">
+                        <i class="fa-solid fa-download mr-2 text-blue-600"></i> <span data-i18n="downloadBtnMain">Descargar CHD Manager (64-bit)</span>
+                    </a>
+                </div>
+                <div class="text-xs text-slate-500" data-i18n="downloadReq">
+                    Requisitos: Windows 10/11 x64. Si abres el programa por primera vez, asegúrate de mantener la carpeta junto al ejecutable.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- PREGUNTAS FRECUENTES -->
+    <!-- ========================================== -->
+    <section id="faq" class="py-16 bg-[#f5f6f8] border-t border-slate-200">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-xl font-bold text-slate-900 mb-6 text-center" data-i18n="faqTitle">Preguntas Frecuentes</h2>
+            <div class="space-y-3">
+                <div class="bg-white border border-slate-300 p-4 rounded-sm">
+                    <h3 class="font-bold text-sm text-slate-900 mb-1" data-i18n="faq1Q">¿Qué emuladores soportan archivos .chd?</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed" data-i18n="faq1A">DuckStation (PS1), PCSX2 (PS2), Flycast (Dreamcast), Beetle Saturn / Kronos (Saturn), Genesis Plus GX (Sega CD) y MAME entre muchos otros soportan el formato de forma nativa sin necesidad de descompresión previa.</p>
+                </div>
+                <div class="bg-white border border-slate-300 p-4 rounded-sm">
+                    <h3 class="font-bold text-sm text-slate-900 mb-1" data-i18n="faq2Q">¿Se pierde información al comprimir un juego a CHD?</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed" data-i18n="faq2A">No. La compresión utilizada por chdman es 100% sin pérdidas (lossless). En cualquier momento puedes revertir el proceso con el botón "Extraer CHD" y obtendrás exactamente tus archivos CUE/BIN o ISO originales.</p>
+                </div>
+                <div class="bg-white border border-slate-300 p-4 rounded-sm">
+                    <h3 class="font-bold text-sm text-slate-900 mb-1" data-i18n="faq3Q">¿Qué hace la opción "Playlists .m3u"?</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed" data-i18n="faq3A">Escanea los archivos CHD en la carpeta y agrupa aquellos con nombres similares (por ejemplo "Juego (Disco 1)" y "Juego (Disco 2)") en un único archivo de texto `.m3u` para facilitar el cambio de disco en emuladores como RetroArch o DuckStation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-300 py-8 text-xs text-slate-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <img src="img/icon.webp" alt="Icon" class="w-4 h-4 object-contain">
+                <span class="font-bold text-slate-800">CHD Manager</span>
+                <span>— Interfaz de usuario para chdman en Windows</span>
+            </div>
+            <div data-i18n="footerText">
+                Desarrollado para la comunidad de emulación.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts in js/ folder -->
+    <script src="js/list.js"></script>
+    <script src="js/translations.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
