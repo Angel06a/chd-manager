@@ -16,15 +16,16 @@ function setLanguage(lang) {
     if (!translations[lang]) lang = 'es';
     currentLang = lang;
     
+    // Guardar la preferencia en el almacenamiento local del navegador
+    localStorage.setItem('chd_manager_lang', lang);
+    
     const globalLangSelect = document.getElementById('global-lang-select');
     if (globalLangSelect) globalLangSelect.value = lang;
 
-    // Cambiar el título de la pestaña del navegador dinámicamente
     if (translations[lang]['pageTitle']) {
         document.title = translations[lang]['pageTitle'];
     }
 
-    // Traducir elementos con atributo data-i18n
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (translations[lang][key]) {
@@ -32,9 +33,8 @@ function setLanguage(lang) {
         }
     });
 
-    // Actualizar texto de la consola si está en estado inicial
     const consoleEl = document.getElementById('ui-console');
-    if (consoleEl && (!isSimulating && consoleEl.value.includes("Cómo empezar") || consoleEl.value.includes("How to start"))) {
+    if (consoleEl && (!isSimulating && (consoleEl.value.includes("Cómo empezar") || consoleEl.value.includes("How to start")))) {
         consoleEl.value = translations[lang]['consoleInitialGuide'];
     }
 
@@ -42,10 +42,17 @@ function setLanguage(lang) {
 }
 
 function initLanguage() {
-    const browserLang = navigator.language || navigator.userLanguage;
-    const shortLang = browserLang ? browserLang.substring(0, 2) : 'es';
+    // Revisar si el usuario ya tiene un idioma guardado previamente
+    const savedLang = localStorage.getItem('chd_manager_lang');
     
-    currentLang = (translations[shortLang]) ? shortLang : 'es';
+    if (savedLang && translations[savedLang]) {
+        currentLang = savedLang;
+    } else {
+        const browserLang = navigator.language || navigator.userLanguage;
+        const shortLang = browserLang ? browserLang.substring(0, 2) : 'es';
+        currentLang = (translations[shortLang]) ? shortLang : 'es';
+    }
+    
     setLanguage(currentLang);
 }
 
