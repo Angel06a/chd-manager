@@ -1,6 +1,6 @@
 const siteLinks = {
     download: "https://www.mediafire.com/file/9fpyopsrdqf37gb/CHD_Manager_v1.0.zip/file",
-    github: "https://github.com",
+    github: "https://github.com/Angel06a/chd-manager",
     gravatar: "https://gravatar.com/totallytacoc43f8d4da2",
     kofi: "https://ko-fi.com/angel06oficial"
 };
